@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        #results {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 100px;
+        }
+        .cat-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+    </style>
+    
+</head>
+<body>
+    <header>
+        <h1>Random Cat Image</h1>
+    </header>
+    <section>
+        <p>Welcome to Random Cat Image! If you click the button, you will get a random cat image. 
+           When you're finished please press the "Clear" button to clear the page. Thank you for trying Random Cat Image! 
+           Have a nice day.
+        </p>
+
+        <button id="fetchButton">Fetch Cat</button>
+        <button id="clearButton" class="clear-button">Clear</button>
+        <div id="results">Cat images will appear here...</div>
+      
+    </section>
+
+    <script>
+        // Default message to display when cleared
+        const defaultMessage = 'Cat images will appear here...';
+        const resultsDiv = document.getElementById('results');
+
+        document.getElementById('fetchButton').addEventListener('click', async () => {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = 'Loading cat...';
+            
+            try {
+                // Fetch data from The Cat API
+                const response = await fetch('https://api.thecatapi.com/v1/images/search');
+                
+                // Check if the response was successful
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                // Parse the JSON data
+                const data = await response.json();
+                
+                // Display the cat image
+                if (data && data.length > 0) {
+                    const catData = data[0];
+                    resultsDiv.innerHTML = `
+                        <h3>Cat Image:</h3>
+                        <img src="${catData.url}" alt="Random cat" class="cat-image">
+                    `;
+                } else {
+                    resultsDiv.innerHTML = 'No cat data returned.';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `Error: ${error.message}`;
+            }
+        });
+
+        document.getElementById('clearButton').addEventListener('click', () => {
+            resultsDiv.innerHTML = defaultMessage;
+        });
+    </script>
+</body>
+</html>
